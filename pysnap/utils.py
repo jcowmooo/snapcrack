@@ -95,7 +95,6 @@ def request(endpoint, auth_token, data=None, files=None,
         'Accept-Locale': 'en'
     }
 
-
     if endpoint == 'login':
         url = AUTH_URL + 'accounts/'
     else:
@@ -108,9 +107,9 @@ def request(endpoint, auth_token, data=None, files=None,
                                             str(now))
         })
         r = requests.post(url + endpoint, data=data, files=files,
-                          headers=headers, proxies=proxy)
+                          headers=headers, proxies=proxies)
     else:
-        r = requests.get(url + endpoint, params=data, headers=headers, proxies=proxy)
+        r = requests.get(url + endpoint, params=data, headers=headers, proxies=proxies)
     # if raise_for_status:
     #     r.raise_for_status()
     # print(type(r))
